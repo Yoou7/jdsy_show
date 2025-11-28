@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科创少年 | 学校AI与科创成果展示</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --light: #f9f9f9;
+            --dark: #2c3e50;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            background: white;
+            color: var(--dark);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            font-weight: 600;
+        }
+        
+        .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .achievement-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .achievement-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-image {
+            height: 200px;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .card-description {
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+        
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tag {
+            background: #e0e0e0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .tag.ai {
+            background: #e1f5fe;
+            color: var(--primary);
+        }
+        
+        .tag.robotics {
+            background: #e8f5e9;
+            color: var(--secondary);
+        }
+        
+        .tag.programming {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+        
+        .tag.competition {
+            background: #fce4ec;
+            color: #e91e63;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 10px;
+            padding: 2rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .modal-image {
+            width: 100%;
+            height: 300px;
+            background-color: var(--primary);
+            margin-bottom: 1.5rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .modal-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+        
+        .modal-description {
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .modal-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .gallery-item {
+            height: 100px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-item {
+            padding: 0 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            margin-top: 0.5rem;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>科创少年</h1>
+            <p class="subtitle">展示学校学生在AI与科创领域的成就与活动</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <section class="stats">
+            <div class="stat-item">
+                <div class="stat-number">42</div>
+                <div class="stat-label">获奖项目</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">18</div>
+                <div class="stat-label">参与学生</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">15</div>
+                <div class="stat-label">科创活动</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">6</div>
+                <div class="stat-label">国家级奖项</div>
+            </div>
+        </section>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="ai">人工智能</button>
+            <button class="filter-btn" data-filter="robotics">机器人</button>
+            <button class="filter-btn" data-filter="programming">编程</button>
+            <button class="filter-btn" data-filter="competition">竞赛获奖</button>
+        </div>
+        
+        <div class="achievements-grid" id="achievementsContainer">
+            <!-- 成就卡片将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <div class="modal" id="achievementModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <div class="modal-image" id="modalImage">项目图片</div>
+            <h2 class="modal-title" id="modalTitle">项目标题</h2>
+            <div class="modal-meta">
+                <div id="modalDate">2023年10月</div>
+                <div id="modalStudents">参与学生: 张三, 李四, 王五</div>
+            </div>
+            <div class="modal-description" id="modalDescription">
+                项目详细描述将在这里显示...
+            </div>
+            <h3>项目图片</h3>
+            <div class="modal-gallery" id="modalGallery">
+                <!-- 图库内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 科创少年 | 学校AI与科创成果展示平台</p>
+            <p>联系我们: innovation@school.edu | 电话: 123-456-7890</p>
+        </div>
+    </footer>
+    
+    <script>
+        // 示例数据
+        const achievements = [
+            {
+                id: 1,
+                title: "智能垃圾分类系统",
+                date: "2023年10月",
+                students: ["张三", "李四", "王五"],
+                category: "ai",
+                description: "该项目使用深度学习技术，开发了一个能够自动识别和分类垃圾的智能系统。通过摄像头捕捉图像，系统能够准确识别可回收物、厨余垃圾、有害垃圾和其他垃圾，并给出相应的分类建议。",
+                images: ["项目图片1", "项目图片2", "项目图片3"]
+            },
+            {
+                id: 2,
+                title: "全国青少年机器人竞赛一等奖",
+                date: "2023年8月",
+                students: ["赵六", "钱七"],
+                category: "robotics",
+                description: "在2023年全国青少年机器人竞赛中，我校学生设计的自主导航机器人表现出色，凭借精准的路径规划和稳定的机械结构，获得评委一致好评，最终荣获一等奖。",
+                images: ["项目图片1", "项目图片2"]
+            },
+            {
+                id: 3,
+                title: "校园智能助手APP",
+                date: "2023年6月",
+                students: ["孙八", "周九", "吴十"],
+                category: "programming",
+                description: "学生团队开发了一款校园智能助手APP，整合了课程表查询、作业提醒、校园活动通知等功能，使用自然语言处理技术实现智能对话，提升校园生活便利性。",
+                images: ["项目图片1", "项目图片2", "项目图片3", "项目图片4"]
+            },
+            {
+                id: 4,
+                title: "AI绘画创意大赛金奖",
+                date: "2023年5月",
+                students: ["郑十一", "王十二"],
+                category: "ai",
+                description: "在市级AI绘画创意大赛中，我校学生使用生成对抗网络(GAN)技术创作了一系列富有创意的数字艺术作品，获得评委高度评价，荣获金奖。",
+                images: ["项目图片1", "项目图片2"]
+            },
+            {
+                id: 5,
+                title: "编程马拉松优胜奖",
+                date: "2023年4月",
+                students: ["陈十三", "林十四", "黄十五"],
+                category: "programming",
+                description: "在48小时编程马拉松比赛中，我校团队开发了一款基于区块链的学生诚信档案系统，凭借创新的想法和稳定的实现，获得比赛优胜奖。",
+                images: ["项目图片1", "项目图片2", "项目图片3"]
+            },
+            {
+                id: 6,
+                title: "无人机自主飞行挑战赛",
+                date: "2023年3月",
+                students: ["刘十六", "杨十七"],
+                category: "robotics",
+                description: "我校无人机团队在自主飞行挑战赛中表现出色，无人机能够精准识别标记物并完成复杂飞行任务，最终获得第三名的好成绩。",
+                images: ["项目图片1", "项目图片2"]
+            }
+        ];
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const achievementsContainer = document.getElementById('achievementsContainer');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const modal = document.getElementById('achievementModal');
+            const closeModal = document.getElementById('closeModal');
+            
+            // 渲染成就卡片
+            function renderAchievements(filter = 'all') {
+                achievementsContainer.innerHTML = '';
+                
+                const filteredAchievements = filter === 'all' 
+                    ? achievements 
+                    : achievements.filter(achievement => achievement.category === filter);
+                
+                filteredAchievements.forEach(achievement => {
+                    const card = document.createElement('div');
+                    card.className = 'achievement-card';
+                    card.dataset.id = achievement.id;
+                    
+                    // 根据类别设置标签样式
+                    let tagClass = '';
+                    switch(achievement.category) {
+                        case 'ai': tagClass = 'ai'; break;
+                        case 'robotics': tagClass = 'robotics'; break;
+                        case 'programming': tagClass = 'programming'; break;
+                        case 'competition': tagClass = 'competition'; break;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="card-image" style="background-color: ${getRandomColor()}">
+                            ${achievement.title}
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">${achievement.title}</h3>
+                            <div class="card-meta">
+                                <span>${achievement.date}</span>
+                                <span>${achievement.students.length}位学生</span>
+                            </div>
+                            <p class="card-description">${achievement.description.substring(0, 100)}...</p>
+                            <div class="card-tags">
+                                <span class="tag ${tagClass}">${getCategoryName(achievement.category)}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    achievementsContainer.appendChild(card);
+                    
+                    // 添加点击事件
+                    card.addEventListener('click', function() {
+                        openModal(achievement);
+                    });
+                });
+            }
+            
+            // 获取随机颜色（用于卡片背景）
+            function getRandomColor() {
+                const colors = ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6', '#f39c12', '#1abc9c'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            // 获取类别名称
+            function getCategoryName(category) {
+                const names = {
+                    'ai': '人工智能',
+                    'robotics': '机器人',
+                    'programming': '编程',
+                    'competition': '竞赛获奖'
+                };
+                return names[category] || category;
+            }
+            
+            // 打开模态框
+            function openModal(achievement) {
+                document.getElementById('modalTitle').textContent = achievement.title;
+                document.getElementById('modalDate').textContent = achievement.date;
+                document.getElementById('modalStudents').textContent = `参与学生: ${achievement.students.join(', ')}`;
+                document.getElementById('modalDescription').textContent = achievement.description;
+                
+                // 设置模态框图片
+                const modalImage = document.getElementById('modalImage');
+                modalImage.textContent = achievement.title;
+                modalImage.style.backgroundColor = getRandomColor();
+                
+                // 渲染图库
+                const modalGallery = document.getElementById('modalGallery');
+                modalGallery.innerHTML = '';
+                
+                achievement.images.forEach(image => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item';
+                    galleryItem.textContent = image;
+                    modalGallery.appendChild(galleryItem);
+                });
+                
+                modal.style.display = 'flex';
+            }
+            
+            // 关闭模态框
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // 筛选按钮事件
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // 为当前按钮添加active类
+                    this.classList.add('active');
+                    // 根据筛选条件重新渲染
+                    renderAchievements(this.dataset.filter);
+                });
+            });
+            
+            // 初始渲染
+            renderAchievements();
+        });
+    </script>
+</body>
+</html>
